@@ -1,5 +1,6 @@
 package;
 
+import flixel.FlxState;
 import flixel.util.FlxSave;
 
 /**
@@ -34,4 +35,6 @@ class Reg
 	 * Especially useful for setting up multiple save slots.
 	 */
 	public static var saves:Array<FlxSave> = [];
+
+	public static var state : PlayState = null;
 }

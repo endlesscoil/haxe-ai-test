@@ -18,8 +18,8 @@ import flixel.util.FlxRandom;
  */
 class PlayState extends FlxState
 {
-	private var _player : Player;
-	private var _enemies : Array<Enemy>;
+	public var players : Array<Player>;
+	public var enemies : Array<Enemy>;
 
 	/**
 	 * Function that is called up when to state is created to set it up. 
@@ -28,20 +28,27 @@ class PlayState extends FlxState
 	{
 		super.create();
 
-		_player = new Player("Bob");
-		_player.setPosition(FlxG.width / 2, FlxG.height / 2);
-		add(_player.sprite);
-
-		_enemies = new Array<Enemy>();
-
-		for (i in 1...10)
+		players = new Array<Player>();
+		for (i in 1...5)
 		{
-			var tenemy : Enemy = new Enemy();
-			tenemy.setPosition(FlxRandom.intRanged(0, FlxG.width), FlxRandom.intRanged(0, FlxG.height));
+			var p = new Player();
+			p.setPosition(FlxRandom.intRanged(0, FlxG.width), FlxRandom.intRanged(0, FlxG.height));
 
-			add(tenemy.sprite);
-			_enemies.push(tenemy);
+			add(p.sprite);
+			players.push(p);
 		}
+
+		enemies = new Array<Enemy>();
+		for (i in 1...20)
+		{
+			var e : Enemy = new Enemy();
+			e.setPosition(FlxRandom.intRanged(0, FlxG.width), FlxRandom.intRanged(0, FlxG.height));
+
+			add(e.sprite);
+			enemies.push(e);
+		}
+
+		Reg.state = this;
 	}
 	
 	/**
@@ -52,9 +59,12 @@ class PlayState extends FlxState
 	{
 		super.destroy();
 
-		_player.destroy();
+		for (p in players)
+		{
+			p.destroy();
+		}
 
-		for (e in _enemies)
+		for (e in enemies)
 		{
 			e.destroy();
 		}
@@ -67,8 +77,12 @@ class PlayState extends FlxState
 	{
 		super.update();
 
-		_player.update();
-		for (e in _enemies)
+		for (p in players)
+		{
+			p.update();
+		}
+
+		for (e in enemies)
 		{
 			e.update();
 		}

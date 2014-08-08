@@ -6,6 +6,7 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
+import flixel.util.FlxPoint;
 import flixel.util.FlxRandom;
 using flixel.util.FlxSpriteUtil;
 
@@ -13,7 +14,7 @@ interface Actor
 {
     public var name : String;
     public var sprite : FlxSprite;
-    public var position : Dynamic = {x: 0, y: 0};
+    public var position : FlxPoint;
 
     public function destroy() : Void;
     public function setPosition(X : Float, Y : Float) : Void;
@@ -23,7 +24,7 @@ class Player implements Actor
 {
     public var name : String = "Player";
     public var sprite : FlxSprite;
-    public var position : Dynamic = {x: 0, y: 0};
+    public var position : FlxPoint;
 
     private var _brain : Brain;
 
@@ -31,6 +32,8 @@ class Player implements Actor
     {
         if (Name != null)
             name = Name;
+
+        position = FlxPoint.get();
 
         var move_behavior = new Behavior.MoveTo(this, 100, 100, 5.0);
         _brain = new Brain();
@@ -80,7 +83,7 @@ class Enemy implements Actor
 {
     public var name : String = "Enemy";
     public var sprite : FlxSprite;
-    public var position : Dynamic = {x: 0, y: 0};
+    public var position : FlxPoint;
 
     private var _brain : Brain;
 
@@ -89,9 +92,12 @@ class Enemy implements Actor
         if (Name != null)
             name = Name;
 
-        var move_behavior = new Behavior.MoveTo(this, 100, 100, 5.0);
+        position = FlxPoint.get();
+
+        //var behavior = new Behavior.MoveTo(this, 100, 100, 5.0);
+        var behavior = new Behavior.Chase(this, FlxRandom.intRanged(1, 5));
         _brain = new Brain();
-        _brain.set_behavior(move_behavior);
+        _brain.set_behavior(behavior);
 
         sprite = new FlxSprite();
 
@@ -105,7 +111,6 @@ class Enemy implements Actor
 
         if (_brain.is_idle())
         {
-            trace('idle.. wandering..');
             wander();
         }
     }
