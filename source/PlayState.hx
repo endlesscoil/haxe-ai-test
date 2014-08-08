@@ -11,6 +11,7 @@ import flixel.util.FlxMath;
 
 import Actor.Player;
 import Actor.Enemy;
+import flixel.util.FlxRandom;
 
 /**
  * A FlxState which can be used for the actual gameplay.
@@ -18,7 +19,7 @@ import Actor.Enemy;
 class PlayState extends FlxState
 {
 	private var _player : Player;
-	private var _enemy : Enemy;
+	private var _enemies : Array<Enemy>;
 
 	/**
 	 * Function that is called up when to state is created to set it up. 
@@ -31,9 +32,16 @@ class PlayState extends FlxState
 		_player.setPosition(FlxG.width / 2, FlxG.height / 2);
 		add(_player.sprite);
 
-		_enemy = new Enemy();
-		_enemy.setPosition(10, 10);
-		add(_enemy.sprite);
+		_enemies = new Array<Enemy>();
+
+		for (i in 1...10)
+		{
+			var tenemy : Enemy = new Enemy();
+			tenemy.setPosition(FlxRandom.intRanged(0, FlxG.width), FlxRandom.intRanged(0, FlxG.height));
+
+			add(tenemy.sprite);
+			_enemies.push(tenemy);
+		}
 	}
 	
 	/**
@@ -45,7 +53,11 @@ class PlayState extends FlxState
 		super.destroy();
 
 		_player.destroy();
-		_enemy.destroy();
+
+		for (e in _enemies)
+		{
+			e.destroy();
+		}
 	}
 
 	/**
@@ -54,5 +66,11 @@ class PlayState extends FlxState
 	override public function update():Void
 	{
 		super.update();
+
+		_player.update();
+		for (e in _enemies)
+		{
+			e.update();
+		}
 	}	
 }
