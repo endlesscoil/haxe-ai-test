@@ -35,9 +35,11 @@ class Player implements Actor
 
         position = FlxPoint.get();
 
-        var move_behavior = new Behavior.MoveTo(this, 100, 100, 5.0);
+        //var move_behavior = new Behavior.MoveTo(this, 100, 100, 5.0);
+        var behavior = Behavior.MoveTo(this, 100, 100, 5.0);
+
         _brain = new Brain();
-        _brain.set_behavior(move_behavior);
+        _brain.set_behavior(behavior);
 
         sprite = new FlxSprite();
 
@@ -67,7 +69,7 @@ class Player implements Actor
         var speed = FlxRandom.intRanged(1, 10);
 
         trace('wandering to: ${pos} at ${speed} speed');
-        _brain.set_behavior(new Behavior.MoveTo(this, pos.x, pos.y, speed));
+        _brain.set_behavior(new Behavior.MoveToBehavior(this, pos.x, pos.y, speed));
     }
 
     public function setPosition(X : Float, Y : Float) : Void
@@ -95,7 +97,7 @@ class Enemy implements Actor
         position = FlxPoint.get();
 
         //var behavior = new Behavior.MoveTo(this, 100, 100, 5.0);
-        var behavior = new Behavior.Chase(this, FlxRandom.intRanged(1, 5));
+        var behavior = new Behavior.ChaseBehavior(this, FlxRandom.intRanged(1, 5));
         _brain = new Brain();
         _brain.set_behavior(behavior);
 
@@ -126,7 +128,7 @@ class Enemy implements Actor
         var speed = FlxRandom.intRanged(1, 10);
 
         trace('wandering to: ${pos} at ${speed} speed');
-        _brain.set_behavior(new Behavior.MoveTo(this, pos.x, pos.y, speed));
+        _brain.set_behavior(new Behavior.MoveToBehavior(this, pos.x, pos.y, speed));
     }
 
     public function setPosition(X : Float, Y : Float) : Void
