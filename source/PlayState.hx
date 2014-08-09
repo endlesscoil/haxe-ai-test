@@ -19,6 +19,7 @@ class PlayState extends FlxState
 {
 	public var players : Array<Player>;
 	public var enemies : Array<Enemy>;
+	private var _script_manager : ScriptManager;
 
 	/**
 	 * Function that is called up when to state is created to set it up. 
@@ -26,6 +27,9 @@ class PlayState extends FlxState
 	override public function create():Void
 	{
 		super.create();
+
+		_script_manager = new ScriptManager();
+		_script_manager.execute(AssetPaths.test__hscript);
 
 		players = new Array<Player>();
 		for (i in 1...5)
@@ -48,8 +52,6 @@ class PlayState extends FlxState
 		}
 
 		Reg.state = this;
-
-		test_hscript();
 	}
 	
 	/**
