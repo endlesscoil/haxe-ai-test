@@ -7,12 +7,12 @@ class ScriptBehavior
 {
     public static function MoveTo(Body : Actor, X : Float, Y : Float, Speed : Float)
     {
-         return new ScriptBehavior(AssetPaths.MoveTo__hscript, { body: Body, x: X, y: Y, speed: Speed } );
+        return new ScriptBehavior(AssetPaths.MoveTo__hscript, { body: Body, x: X, y: Y, speed: Speed } );
     }
 
     public static function Chase(Body : Actor, Speed : Float)
     {
-        return null;
+        return new ScriptBehavior(AssetPaths.Chase__hscript, { body: Body, speed: Speed });
     }
 
     private var _manager : ScriptManager;

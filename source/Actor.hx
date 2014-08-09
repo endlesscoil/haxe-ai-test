@@ -35,16 +35,10 @@ class Player implements Actor
 
         position = FlxPoint.get();
 
-        //var move_behavior = new Behavior.MoveTo(this, 100, 100, 5.0);
-        //var behavior = Behavior.MoveTo(this, 100, 100, 5.0);
-        //var behavior = new ScriptBehavior(AssetPaths.test__hscript);
-        var behavior = ScriptBehavior.MoveTo(this, 100, 100, 5.0);
-
         _brain = new Brain2();
-        _brain.set_behavior(behavior);
+        _brain.set_behavior(ScriptBehavior.MoveTo(this, 100, 100, 5.0));
 
         sprite = new FlxSprite();
-
         sprite.makeGraphic(10, 10, FlxColor.TRANSPARENT, true);
         sprite.drawCircle(sprite.width / 2, sprite.height / 2, 5, FlxColor.AQUAMARINE);
     }
@@ -54,10 +48,7 @@ class Player implements Actor
         _brain.update();
 
         if (_brain.is_idle())
-        {
-            trace('idle.. wandering..');
             wander();
-        }
     }
 
     public function destroy() : Void
@@ -70,7 +61,6 @@ class Player implements Actor
         var pos = { x: FlxRandom.intRanged(0, FlxG.width), y: FlxRandom.intRanged(0, FlxG.height) };
         var speed = FlxRandom.intRanged(1, 10);
 
-        trace('wandering to: ${pos} at ${speed} speed');
         _brain.set_behavior(ScriptBehavior.MoveTo(this, pos.x, pos.y, speed));
     }
 
@@ -98,42 +88,22 @@ class Enemy implements Actor
 
         position = FlxPoint.get();
 
-        //var behavior = new Behavior.MoveTo(this, 100, 100, 5.0);
-        //var behavior = new Behavior.ChaseBehavior(this, FlxRandom.intRanged(1, 5));
-        //var behavior = new ScriptBehavior(AssetPaths.test__hscript);
-        var behavior = ScriptBehavior.MoveTo(this, 100, 100, 5.0);
         _brain = new Brain2();
-        _brain.set_behavior(behavior);
+        _brain.set_behavior(ScriptBehavior.Chase(this, FlxRandom.intRanged(1, 5));
 
         sprite = new FlxSprite();
-
         sprite.makeGraphic(10, 10, FlxColor.TRANSPARENT, true);
-        sprite.drawCircle(sprite.width / 2, sprite.height / 2, 5, FlxColor.CRIMSON);
+        sprite.drawCircle(sprite.width / 2, sprite.height / 2, 5, 0xFFFF0000);
     }
 
     public function update() : Void
     {
         _brain.update();
-
-        if (_brain.is_idle())
-        {
-            wander();
-        }
     }
 
     public function destroy() : Void
     {
         sprite = FlxDestroyUtil.destroy(sprite);
-    }
-
-    public function wander() : Void
-    {
-        var pos = { x: FlxRandom.intRanged(0, FlxG.width), y: FlxRandom.intRanged(0, FlxG.height) };
-        var speed = FlxRandom.intRanged(1, 10);
-
-        trace('wandering to: ${pos} at ${speed} speed');
-        _brain.set_behavior(ScriptBehavior.MoveTo(this, pos.x, pos.y, speed));
-        //_brain.set_behavior(new Behavior.MoveToBehavior(this, pos.x, pos.y, speed));
     }
 
     public function setPosition(X : Float, Y : Float) : Void

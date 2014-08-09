@@ -1,35 +1,27 @@
 function init()
 {
-	trace('calling init');
 	Script.initialized = true;
 	Script.vector = FlxVector.get(0, 0);
 }
 
 function update()
 {
-	_body = Script.body;
-	x = Script.x;
-	y = Script.y;
-	speed = Script.speed;
-	_move_vector = Script.vector;
-
-	if (_body.position.x != x || _body.position.y != y)
+	if (Script.body.position.x != Script.x || Script.body.position.y != Script.y)
 	{
-	    _move_vector.x = x - _body.position.x;
-	    _move_vector.y = y - _body.position.y;
-	    _move_vector.normalize();
+	    Script.vector.x = Script.x - Script.body.position.x;
+	    Script.vector.y = Script.y - Script.body.position.y;
+	    Script.vector.normalize();
 
-	    var new_pos = FlxPoint.weak(_body.position.x + _move_vector.x * speed, _body.position.y + _move_vector.y * speed);
+	    var new_pos = FlxPoint.weak(Script.body.position.x + Script.vector.x * Script.speed, Script.body.position.y + Script.vector.y * Script.speed);
 
-	    if (new_pos.distanceTo(FlxPoint.weak(x, y)) < speed)
-	        _body.setPosition(x, y);
+	    if (new_pos.distanceTo(FlxPoint.weak(Script.x, Script.y)) < Script.speed)
+	        Script.body.setPosition(Script.x, Script.y);
 	    else
-	        _body.setPosition(new_pos.x, new_pos.y);
+	        Script.body.setPosition(new_pos.x, new_pos.y);
 	}
 	else
 	{
 	    Script.state = BehaviorState.SUCCEEDED;
-	    trace('MoveTo: SUCCEEDED');
 	}
 }
 

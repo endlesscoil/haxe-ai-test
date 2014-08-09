@@ -1,0 +1,67 @@
+function init()
+{
+	Script.paused = -1;
+    Script.target = null;
+	Script.initialized = true;
+}
+
+function update()
+{
+    if (Script.paused != -1)
+    {
+        if (Date.now().getTime() < Script.paused + 5)
+            return;
+        else
+        {
+            Script.paused = -1;
+
+            Script.body.sprite.resetFrameBitmapDatas();
+            FlxSpriteUtil.drawCircle(Script.body.sprite, Script.body.sprite.width / 2, Script.body.sprite.height / 2, Script.body.sprite.width / 2, 0xFFFF0000);
+        }
+    }
+
+    if (Script.target == null)
+    {
+        for (p in GameState.players)
+        {
+            if (p.position.distanceTo(Script.body.position) < 75)
+            {
+                Script.target = p;
+                break;
+            }
+        }
+    }
+
+    // chase
+    if (Script.target != null)
+    {
+        if (Script.body.position.distanceTo(Script.target.position) > 75)
+        {
+            Script.target = null;
+        }
+        else
+        {
+            var mv = FlxVector.get();
+
+            mv.x = Script.target.position.x - Script.body.position.x;
+            mv.y = Script.target.position.y - Script.body.position.y;
+            mv.normalize();
+
+            var new_pos = FlxPoint.weak(Script.body.position.x + mv.x * Script.speed, Script.body.position.y + mv.y * Script.speed);
+
+            Script.body.setPosition(new_pos.x, new_pos.y);
+
+            if (FlxCollision.pixelPerfectCheck(Script.body.sprite, Script.target.sprite))
+            {
+                Script.paused = Date.now().getTime();
+                Script.body.sprite.resetFrameBitmapDatas();
+                FlxSpriteUtil.drawCircle(Script.body.sprite, Script.body.sprite.width / 2, Script.body.sprite.height / 2, Script.body.sprite.width / 2, 0xFFFFFF00);
+            }
+        }
+    }
+}
+
+if (!Script.initialized)
+	init();
+else
+	update();
