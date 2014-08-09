@@ -28,6 +28,8 @@ class PlayState extends FlxState
 	{
 		super.create();
 
+		Reg.state = this;
+
 		var test_state : Dynamic = {};
 		_script_manager = new ScriptManager();
 		//_script_manager.execute(AssetPaths.test__hscript, test_state);
@@ -54,8 +56,6 @@ class PlayState extends FlxState
 			add(e.sprite);
 			enemies.push(e);
 		}
-
-		Reg.state = this;
 	}
 	
 	/**

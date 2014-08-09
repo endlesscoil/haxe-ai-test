@@ -5,6 +5,19 @@ function init()
 	Script.initialized = true;
 }
 
+function get_random_target(distance)
+{
+    var potential_targets = new Array();
+    for (p in GameState.players)
+    {
+        if (p.position.distanceTo(Script.body.position) < distance)
+            potential_targets.push(p);
+    }
+
+    if (potential_targets.length > 0)
+        Script.target = potential_targets[FlxRandom.intRanged(0, potential_targets.length - 1)];
+}
+
 function update()
 {
     if (Script.paused != -1)
@@ -21,16 +34,7 @@ function update()
     }
 
     if (Script.target == null)
-    {
-        for (p in GameState.players)
-        {
-            if (p.position.distanceTo(Script.body.position) < 75)
-            {
-                Script.target = p;
-                break;
-            }
-        }
-    }
+        get_random_target(75);
 
     // chase
     if (Script.target != null)
@@ -41,6 +45,9 @@ function update()
         }
         else
         {
+            if (FlxRandom.chanceRoll(25))
+                get_random_target(75);
+
             var mv = FlxVector.get();
 
             mv.x = Script.target.position.x - Script.body.position.x;
