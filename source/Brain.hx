@@ -1,9 +1,9 @@
 
 package ;
 
-import Behavior.BehaviorState;
+import ScriptBehavior.BehaviorState;
 
-class Brain2
+class Brain
 {
     private var _behavior : ScriptBehavior = null;
 

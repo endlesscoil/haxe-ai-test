@@ -1,14 +1,16 @@
 
 package ;
 
+import flixel.FlxG;
 import flixel.util.FlxCollision;
 import flixel.util.FlxColor;
 import flixel.util.FlxPoint;
 import flixel.util.FlxSpriteUtil;
 import flixel.util.FlxVector;
 import sys.FileSystem;
-import flixel.FlxG;
 import sys.io.File;
+
+import ScriptBehavior.BehaviorState;
 
 class ScriptManager 
 {
@@ -23,8 +25,6 @@ class ScriptManager
         _interpreter = new hscript.Interp();
         _parser = new hscript.Parser();
 
-        trace('test: ' + AssetPaths.test__hscript);
-
         load_scripts();
     }
 
@@ -33,13 +33,13 @@ class ScriptManager
         try
         {
             _interpreter.variables.set("Std", Std);
-            _interpreter.variables.set("Date", Date);
+            _interpreter.variables.set("Now", Date.now);
             _interpreter.variables.set("FlxG", FlxG);
             _interpreter.variables.set("FlxPoint", FlxPoint);
             _interpreter.variables.set("FlxVector", FlxVector);
             _interpreter.variables.set("FlxCollision", FlxCollision);
             _interpreter.variables.set("FlxSpriteUtil", FlxSpriteUtil);
-            _interpreter.variables.set("BehaviorState", Behavior.BehaviorState);
+            _interpreter.variables.set("BehaviorState", BehaviorState);
             _interpreter.variables.set("GameState", Reg.state);
             _interpreter.variables.set("Script", ScriptState);
 

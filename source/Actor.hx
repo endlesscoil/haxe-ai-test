@@ -1,7 +1,6 @@
 
 package ;
 
-import Behavior.Brain;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.util.FlxColor;
@@ -26,7 +25,7 @@ class Player implements Actor
     public var sprite : FlxSprite;
     public var position : FlxPoint;
 
-    private var _brain : Brain2;
+    private var _brain : Brain;
 
     public function new(?Name : String) : Void
     {
@@ -35,7 +34,7 @@ class Player implements Actor
 
         position = FlxPoint.get();
 
-        _brain = new Brain2();
+        _brain = new Brain();
         _brain.set_behavior(ScriptBehavior.MoveTo(this, 100, 100, 5.0));
 
         sprite = new FlxSprite();
@@ -79,7 +78,7 @@ class Enemy implements Actor
     public var sprite : FlxSprite;
     public var position : FlxPoint;
 
-    private var _brain : Brain2;
+    private var _brain : Brain;
 
     public function new(?Name : String) : Void
     {
@@ -88,8 +87,8 @@ class Enemy implements Actor
 
         position = FlxPoint.get();
 
-        _brain = new Brain2();
-        _brain.set_behavior(ScriptBehavior.Chase(this, FlxRandom.intRanged(1, 5));
+        _brain = new Brain();
+        _brain.set_behavior(ScriptBehavior.Chase(this, FlxRandom.intRanged(1, 5)));
 
         sprite = new FlxSprite();
         sprite.makeGraphic(10, 10, FlxColor.TRANSPARENT, true);

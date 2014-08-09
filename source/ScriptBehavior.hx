@@ -1,7 +1,13 @@
 
 package ;
 
-import Behavior.BehaviorState;
+enum BehaviorState
+{
+    IDLE;
+    RUNNING;
+    SUCCEEDED;
+    FAILED;
+}
 
 class ScriptBehavior 
 {
