@@ -1,6 +1,8 @@
 
 package ;
 
+import flixel.util.FlxPoint;
+import flixel.util.FlxVector;
 import sys.FileSystem;
 import flixel.FlxG;
 import sys.io.File;
@@ -23,10 +25,18 @@ class ScriptManager
         load_scripts();
     }
 
-    public function execute(ScriptName : String) : Bool
+    public function execute(ScriptName : String, ScriptState : Dynamic) : Bool
     {
         try
         {
+            _interpreter.variables.set("Std", Std);
+            _interpreter.variables.set("FlxG", FlxG);
+            _interpreter.variables.set("FlxPoint", FlxPoint);
+            _interpreter.variables.set("FlxVector", FlxVector);
+            _interpreter.variables.set("BehaviorState", Behavior.BehaviorState);
+            _interpreter.variables.set("GameState", Reg.state);
+            _interpreter.variables.set("Script", ScriptState);
+
             _interpreter.execute(_scripts.get(ScriptName));
 
             return true;

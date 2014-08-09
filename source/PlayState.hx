@@ -28,8 +28,12 @@ class PlayState extends FlxState
 	{
 		super.create();
 
+		var test_state : Dynamic = {};
 		_script_manager = new ScriptManager();
-		_script_manager.execute(AssetPaths.test__hscript);
+		//_script_manager.execute(AssetPaths.test__hscript, test_state);
+		//_script_manager.execute(AssetPaths.test__hscript, test_state);
+
+		Reg.script_manager = _script_manager;
 
 		players = new Array<Player>();
 		for (i in 1...5)

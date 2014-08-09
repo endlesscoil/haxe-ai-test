@@ -36,5 +36,6 @@ class Reg
 	 */
 	public static var saves:Array<FlxSave> = [];
 
+	public static var script_manager : ScriptManager = null;
 	public static var state : PlayState = null;
 }

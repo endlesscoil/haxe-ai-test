@@ -1,3 +1,7 @@
+trace ('scriptstate.x=' + Script.x);
+
 var x = 5;
 
 trace('x=' + x);
+
+Script.x = x;
