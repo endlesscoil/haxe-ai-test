@@ -3,6 +3,7 @@ package ;
 
 import Behavior.BehaviorState;
 import flixel.FlxState;
+import flixel.util.FlxColor;
 import flixel.util.FlxMath;
 import flixel.util.FlxPoint;
 import flixel.util.FlxVector;
@@ -116,6 +117,7 @@ class ChaseBehavior extends Behavior
 {
     private var _body : Actor;
     private var _current_target : Actor = null;
+    private var _paused : Float = -1;
 
     public var speed : Float;
 
@@ -129,6 +131,20 @@ class ChaseBehavior extends Behavior
 
     override public function update() : Void
     {
+        if (_paused != -1)
+        {
+            if (Date.now().getTime() < _paused + 5)
+                return;
+            else
+            {
+                trace('unpausing..');
+                _paused = -1;
+
+                _body.sprite.resetFrameBitmapDatas();
+                _body.sprite.drawCircle(_body.sprite.width / 2, _body.sprite.height / 2, _body.sprite.width / 2, FlxColor.CRIMSON);
+            }
+        }
+
         if (_current_target == null)
         {
             for (p in Reg.state.players)
@@ -164,8 +180,10 @@ class ChaseBehavior extends Behavior
 
                 if (FlxCollision.pixelPerfectCheck(_body.sprite, _current_target.sprite))
                 {
-                    trace('CAUGHT EM!');
-                    _state = BehaviorState.SUCCEEDED;
+                    trace('CAUGHT EM, pausing.');
+                    _paused = Date.now().getTime();
+                    _body.sprite.resetFrameBitmapDatas();
+                    _body.sprite.drawCircle(_body.sprite.width / 2, _body.sprite.height / 2, _body.sprite.width / 2, FlxColor.YELLOW);
                 }
             }
         }
