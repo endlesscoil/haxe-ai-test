@@ -19,7 +19,9 @@ class PlayState extends FlxState
 {
 	public var players : Array<Player>;
 	public var enemies : Array<Enemy>;
+	public var _test : Actor.TestActor;
 	private var _script_manager : ScriptManager;
+	private var _behavior_manager : BehaviorManager;
 
 	/**
 	 * Function that is called up when to state is created to set it up. 
@@ -29,16 +31,14 @@ class PlayState extends FlxState
 		super.create();
 
 		Reg.state = this;
-
-		var test_state : Dynamic = {};
 		_script_manager = new ScriptManager();
-		//_script_manager.execute(AssetPaths.test__hscript, test_state);
-		//_script_manager.execute(AssetPaths.test__hscript, test_state);
-
 		Reg.script_manager = _script_manager;
 
+		_behavior_manager = new BehaviorManager();
+		Reg.behavior_manager = _behavior_manager;
+
 		players = new Array<Player>();
-		for (i in 1...5)
+		for (i in 0...1)
 		{
 			var p = new Player();
 			p.setPosition(FlxRandom.intRanged(0, FlxG.width), FlxRandom.intRanged(0, FlxG.height));
@@ -48,7 +48,7 @@ class PlayState extends FlxState
 		}
 
 		enemies = new Array<Enemy>();
-		for (i in 1...20)
+		for (i in 0...5)
 		{
 			var e : Enemy = new Enemy();
 			e.setPosition(FlxRandom.intRanged(0, FlxG.width), FlxRandom.intRanged(0, FlxG.height));
@@ -56,6 +56,10 @@ class PlayState extends FlxState
 			add(e.sprite);
 			enemies.push(e);
 		}
+
+		_test = new Actor.TestActor();
+		_test.setPosition(200, 200);
+		add(_test.sprite);
 	}
 	
 	/**
@@ -75,6 +79,8 @@ class PlayState extends FlxState
 		{
 			e.destroy();
 		}
+
+		_test.destroy();
 	}
 
 	/**
@@ -93,33 +99,7 @@ class PlayState extends FlxState
 		{
 			e.update();
 		}
-	}	
 
-	public function test_hscript() : Void
-	{
-        var interp = new hscript.Interp();
-        var parser = new hscript.Parser();
-
-		var script = "
-
-			var x = FlxG.width; 
-			trace('x=' + Std.string(x));
-
-			function foo()
-			{
-				for (p in state.players)
-				{
-					trace('p=' + Std.string(p));
-				}
-			}
-		";
-
-		var ast = parser.parseString(script);
-
-		interp.variables.set("Std", Std);
-		interp.variables.set("FlxG", FlxG);
-		interp.variables.set("state", Reg.state);
-
-		trace(interp.execute(ast));
+		_test.update();
 	}
 }

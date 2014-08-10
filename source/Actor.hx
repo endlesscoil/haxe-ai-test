@@ -34,8 +34,7 @@ class Player implements Actor
 
         position = FlxPoint.get();
 
-        _brain = new Brain();
-        _brain.set_behavior(ScriptBehavior.MoveTo(this, 100, 100, 5.0));
+        _brain = new Brain(ScriptBehavior.MoveTo(this, 100, 100, 5.0));
 
         sprite = new FlxSprite();
         sprite.makeGraphic(10, 10, FlxColor.TRANSPARENT, true);
@@ -87,12 +86,55 @@ class Enemy implements Actor
 
         position = FlxPoint.get();
 
-        _brain = new Brain();
-        _brain.set_behavior(ScriptBehavior.Chase(this, FlxRandom.intRanged(1, 5)));
+        _brain = new Brain(ScriptBehavior.Chase(this, FlxRandom.intRanged(1, 5)));
 
         sprite = new FlxSprite();
         sprite.makeGraphic(10, 10, FlxColor.TRANSPARENT, true);
         sprite.drawCircle(sprite.width / 2, sprite.height / 2, 5, 0xFFFF0000);
+    }
+
+    public function update() : Void
+    {
+        _brain.update();
+    }
+
+    public function destroy() : Void
+    {
+        sprite = FlxDestroyUtil.destroy(sprite);
+    }
+
+    public function setPosition(X : Float, Y : Float) : Void
+    {
+        position.x = X;
+        position.y = Y;
+
+        sprite.setPosition(X, Y);
+    }
+}
+
+class TestActor implements Actor
+{
+    public var name : String = "TestActor";
+    public var sprite : FlxSprite;
+    public var position : FlxPoint;
+
+    private var _brain : Brain;
+
+    public function new(?Name : String) : Void
+    {
+        if (Name != null)
+            name = Name;
+
+        position = FlxPoint.get();
+
+        var behavior = Reg.behavior_manager.get_behavior(AssetPaths.BoxMove__json);
+        _brain = new Brain();
+        _brain.set_behavior(behavior);
+        _brain.set_body(this);
+
+        sprite = new FlxSprite();
+        sprite.makeGraphic(10, 10, FlxColor.TRANSPARENT, true);
+        sprite.drawCircle(sprite.width / 2, sprite.height / 2, 5, 0xFF00FF00);
     }
 
     public function update() : Void
