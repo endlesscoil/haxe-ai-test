@@ -53,12 +53,20 @@ class RepeatBehavior extends ScriptBehavior
 {
 	private var _repeat_count : Int = 1;
 	private var _repetition : Int = 0;
+	private var _action : ScriptBehavior;
 
-	public function new(Name : String, ?RepeatCount : Int = 1, ?InitialScriptState : Dynamic) : Void
+	public function new(Action : ScriptBehavior, ?RepeatCount : Int = 1, ?InitialScriptState : Dynamic) : Void
 	{
-		super(Name, InitialScriptState);
+		super("", InitialScriptState);
 
+		_action = Action;
 		_repeat_count = RepeatCount;
+	}
+
+	override public function start() : Void
+	{
+		state = BehaviorState.RUNNING;
+		_action.start();
 	}
 
 	override public function update() : Void
@@ -71,7 +79,7 @@ class RepeatBehavior extends ScriptBehavior
 
 		_repetition += 1;
 
-		super.update();
+		_action.update();
 	}
 }
 

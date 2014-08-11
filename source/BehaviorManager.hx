@@ -57,6 +57,8 @@ class BehaviorManager
 		{
 			case "sequence":
 				behavior = build_sequence(behavior_def);
+			case "repeat":
+				behavior = build_repetition(behavior_def);
 			case "script":
 				behavior = build_script(behavior_def);
 		}
@@ -80,6 +82,17 @@ class BehaviorManager
 		behavior = new SequenceBehavior(behaviors);
 
 		trace('\tbehaviors: $behaviors');
+
+		return behavior;
+	}
+
+	private function build_repetition(behavior_def : Dynamic) : ScriptBehavior
+	{
+		trace('building repetition: $behavior_def');
+		var behavior : ScriptBehavior = null;
+
+		var temp_behavior : ScriptBehavior = build_behavior(behavior_def.action);
+		behavior = new ScriptBehavior.RepeatBehavior(temp_behavior, behavior_def.count);
 
 		return behavior;
 	}
