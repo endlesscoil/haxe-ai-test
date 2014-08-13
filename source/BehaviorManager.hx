@@ -21,8 +21,6 @@ class BehaviorManager
 		load_behaviors();
 	}
 
-
-	
 	private function load_behaviors() : Void
 	{
 		_behaviors = new Map<String, ScriptBehavior>();

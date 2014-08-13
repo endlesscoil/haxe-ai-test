@@ -23,6 +23,8 @@ class ScriptBehavior
 
     private var _manager : ScriptManager;
     private var _script_name : String;
+    private var _body : Actor;
+    private var _initial_state : Dynamic = {};
     public var script_state : Dynamic = {};
 
     public var state(get, set) : BehaviorState;
@@ -35,18 +37,34 @@ class ScriptBehavior
     	_script_name = Name;
 
     	if (InitialScriptState != null)
-    		script_state = InitialScriptState;
+    	{
+    		trace('initializing states... $script_state  ...... $_initial_state .... $InitialScriptState');
+    		_initial_state = InitialScriptState;
+    		script_state = Reflect.copy(InitialScriptState);
+    	}
 
     	state = BehaviorState.IDLE;
     }
-    public function start() : Void { state = BehaviorState.RUNNING; }
+    public function start(Body : Actor) : Void 
+    { 
+    	reset();
+    	_body = Body;
+    	script_state.body = Body;
+    	state = BehaviorState.RUNNING;
+    }
 
     public function update() : Void 
     { 
     	_manager.execute(_script_name, script_state);
     }
 
-    public function reset() : Void { state = BehaviorState.IDLE; }
+    public function reset() : Void 
+    { 
+    	trace('$_script_name reset');
+    	trace('$script_state -> $_initial_state');
+    	script_state = Reflect.copy(_initial_state);
+    	state = BehaviorState.IDLE; 
+    }
 }
 
 class RepeatBehavior extends ScriptBehavior
@@ -63,23 +81,40 @@ class RepeatBehavior extends ScriptBehavior
 		_repeat_count = RepeatCount;
 	}
 
-	override public function start() : Void
+	override public function start(Body : Actor) : Void
 	{
 		state = BehaviorState.RUNNING;
-		_action.start();
+		_action.start(Body);
+	}
+
+	override public function reset() : Void
+	{
+		super.reset();
+		trace('Repeat reset');
+		_action.reset();
+		_repetition = 0;
 	}
 
 	override public function update() : Void
 	{
-		if (_repeat_count != -1 && _repetition > _repeat_count)
+		if (_repetition >= _repeat_count - 1)
 		{
+			trace('REPEAT COMPLETE');
 			state = BehaviorState.SUCCEEDED;
+			//reset();
 			return;
 		}
 
-		_repetition += 1;
+		//if (_action.state != BehaviorState.RUNNING)
+		//	_repetition += 1;
 
 		_action.update();
+		if (_action.state != BehaviorState.RUNNING)
+		{
+			trace('REPEAT ACTION ${_repetition} COMPLETE');
+			_action.reset();
+			_repetition += 1;
+		}
 	}
 }
 
@@ -95,6 +130,19 @@ class SequenceBehavior extends ScriptBehavior
 		_actions = Actions;
 	}
 
+	override public function reset() : Void
+	{
+		super.reset();
+		trace('Seq reset');
+
+		_current_idx = -1;
+
+		for (a in _actions)
+		{
+			a.reset();
+		}
+	}
+
 	override public function update() : Void
 	{
 		trace('Sequence update: ${_current_idx}');
@@ -105,14 +153,17 @@ class SequenceBehavior extends ScriptBehavior
 			if (_current_idx > _actions.length - 1)
 			{
 				trace('SEQUENCE COMPLETE!');
+				reset();
 				state = BehaviorState.SUCCEEDED;
 				return;
 			}
 
-			_actions[_current_idx].script_state.body = script_state.body;
-			_actions[_current_idx].start();
+			//_actions[_current_idx].script_state.body = script_state.body;
+			trace('STARTING SEQ ${_current_idx}');
+			_actions[_current_idx].start(_body);
 		}
 
+		trace('SEQUENCE UPDATE ${_current_idx}');
 		_actions[_current_idx].update();
 	}
 }

@@ -34,7 +34,7 @@ class Player implements Actor
 
         position = FlxPoint.get();
 
-        _brain = new Brain(ScriptBehavior.MoveTo(this, 100, 100, 5.0));
+        _brain = new Brain(this, ScriptBehavior.MoveTo(this, 100, 100, 5.0));
 
         sprite = new FlxSprite();
         sprite.makeGraphic(10, 10, FlxColor.TRANSPARENT, true);
@@ -86,7 +86,7 @@ class Enemy implements Actor
 
         position = FlxPoint.get();
 
-        _brain = new Brain(ScriptBehavior.Chase(this, FlxRandom.intRanged(1, 5)));
+        _brain = new Brain(this, ScriptBehavior.Chase(this, FlxRandom.intRanged(1, 5)));
 
         sprite = new FlxSprite();
         sprite.makeGraphic(10, 10, FlxColor.TRANSPARENT, true);
@@ -128,9 +128,7 @@ class TestActor implements Actor
         position = FlxPoint.get();
 
         var behavior = Reg.behavior_manager.get_behavior(AssetPaths.BoxMove__json);
-        _brain = new Brain();
-        _brain.set_behavior(behavior);
-        _brain.set_body(this);
+        _brain = new Brain(this, behavior);
 
         sprite = new FlxSprite();
         sprite.makeGraphic(10, 10, FlxColor.TRANSPARENT, true);

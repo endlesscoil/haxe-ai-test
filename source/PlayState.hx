@@ -44,7 +44,7 @@ class PlayState extends FlxState
 			p.setPosition(FlxRandom.intRanged(0, FlxG.width), FlxRandom.intRanged(0, FlxG.height));
 
 			add(p.sprite);
-			players.push(p);
+			//players.push(p);
 		}
 
 		enemies = new Array<Enemy>();
@@ -54,7 +54,7 @@ class PlayState extends FlxState
 			e.setPosition(FlxRandom.intRanged(0, FlxG.width), FlxRandom.intRanged(0, FlxG.height));
 
 			add(e.sprite);
-			enemies.push(e);
+			//enemies.push(e);
 		}
 
 		_test = new Actor.TestActor();

@@ -46,6 +46,7 @@ class ScriptManager
         {
             _interpreter.variables.set("Script", ScriptState);
 
+            trace('executing $ScriptName -> ${ScriptState}');
             _interpreter.execute(_scripts.get(ScriptName));
 
             return true;
