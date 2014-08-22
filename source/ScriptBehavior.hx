@@ -89,10 +89,12 @@ class RepeatBehavior extends ScriptBehavior
 
 	override public function reset() : Void
 	{
+        trace('repeat reset1');
 		super.reset();
 		trace('Repeat reset');
 		_action.reset();
 		_repetition = 0;
+        state = BehaviorState.IDLE;
 	}
 
 	override public function update() : Void
@@ -109,7 +111,7 @@ class RepeatBehavior extends ScriptBehavior
 		//	_repetition += 1;
 
 		_action.update();
-		if (_action.state != BehaviorState.RUNNING)
+		if (_action.state == BehaviorState.SUCCEEDED)
 		{
 			trace('REPEAT ACTION ${_repetition} COMPLETE');
 			_action.reset();
@@ -136,6 +138,7 @@ class SequenceBehavior extends ScriptBehavior
 		trace('Seq reset');
 
 		_current_idx = -1;
+        state = BehaviorState.IDLE;
 
 		for (a in _actions)
 		{
@@ -147,7 +150,7 @@ class SequenceBehavior extends ScriptBehavior
 	{
 		trace('Sequence update: ${_current_idx}');
 
-		if (_current_idx == -1 || _actions[_current_idx].state != BehaviorState.RUNNING)
+		if (_current_idx == -1 || (_actions[_current_idx].state != BehaviorState.RUNNING && _actions[_current_idx].state != BehaviorState.IDLE))
 		{
 			_current_idx++;
 			if (_current_idx > _actions.length - 1)

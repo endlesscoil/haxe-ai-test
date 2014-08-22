@@ -38,7 +38,7 @@ class PlayState extends FlxState
 		Reg.behavior_manager = _behavior_manager;
 
 		players = new Array<Player>();
-		for (i in 0...1)
+		for (i in 0...0)
 		{
 			var p = new Player();
 			p.setPosition(FlxRandom.intRanged(0, FlxG.width), FlxRandom.intRanged(0, FlxG.height));
@@ -48,7 +48,7 @@ class PlayState extends FlxState
 		}
 
 		enemies = new Array<Enemy>();
-		for (i in 0...5)
+		for (i in 0...0)
 		{
 			var e : Enemy = new Enemy();
 			e.setPosition(FlxRandom.intRanged(0, FlxG.width), FlxRandom.intRanged(0, FlxG.height));
