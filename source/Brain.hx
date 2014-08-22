@@ -19,7 +19,6 @@ class Brain
 
     public function update() : Void
     {
-    	//trace('_Behavior.state=${_behavior.state}');
         if (_behavior != null && _behavior.state == BehaviorState.RUNNING)
             _behavior.update();
     }
@@ -33,6 +32,12 @@ class Brain
     {
         _behavior = NewBehavior;
 
+        _behavior.start(_body);
+    }
+
+    public function reset_behavior() : Void
+    {
+        _behavior.reset();
         _behavior.start(_body);
     }
 }

@@ -1,0 +1,33 @@
+function init()
+{
+    Script.initialized = true;
+    Script.vector = FlxVector.get(0, 0);
+    Script.x = FlxRandom.intRanged(0, FlxG.width);
+    Script.y = FlxRandom.intRanged(0, FlxG.height);
+}
+
+function update()
+{
+    if (Script.body.position.x != Script.x || Script.body.position.y != Script.y)
+    {
+        Script.vector.x = Script.x - Script.body.position.x;
+        Script.vector.y = Script.y - Script.body.position.y;
+        Script.vector.normalize();
+
+        var new_pos = FlxPoint.weak(Script.body.position.x + Script.vector.x * Script.speed, Script.body.position.y + Script.vector.y * Script.speed);
+
+        if (new_pos.distanceTo(FlxPoint.weak(Script.x, Script.y)) < Script.speed)
+            Script.body.setPosition(Script.x, Script.y);
+        else
+            Script.body.setPosition(new_pos.x, new_pos.y);
+    }
+    else
+    {
+        Script.state = BehaviorState.SUCCEEDED;
+    }
+}
+
+if (!Script.initialized)
+    init();
+else
+    update();

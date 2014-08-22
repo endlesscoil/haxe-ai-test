@@ -1,0 +1,12 @@
+{
+    "type": "repeat",
+    "count": -1,
+    "action": {
+                "type": "script",
+                "action": "Wander",
+                "params": {
+                    "speed": 5
+                }
+            }
+    }
+}

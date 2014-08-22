@@ -38,23 +38,23 @@ class PlayState extends FlxState
 		Reg.behavior_manager = _behavior_manager;
 
 		players = new Array<Player>();
-		for (i in 0...0)
+		for (i in 0...5)
 		{
-			var p = new Player();
+			var p = new Player(Std.string(i));
 			p.setPosition(FlxRandom.intRanged(0, FlxG.width), FlxRandom.intRanged(0, FlxG.height));
 
 			add(p.sprite);
-			//players.push(p);
+			players.push(p);
 		}
 
 		enemies = new Array<Enemy>();
-		for (i in 0...0)
+		for (i in 0...10)
 		{
-			var e : Enemy = new Enemy();
+			var e : Enemy = new Enemy(Std.string(i));
 			e.setPosition(FlxRandom.intRanged(0, FlxG.width), FlxRandom.intRanged(0, FlxG.height));
 
 			add(e.sprite);
-			//enemies.push(e);
+			enemies.push(e);
 		}
 
 		_test = new Actor.TestActor();

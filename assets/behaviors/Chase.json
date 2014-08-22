@@ -1,0 +1,24 @@
+{
+    "type": "repeat",
+    "count": -1,
+    "action": {
+        "type": "sequence",
+        "actions": [
+            {
+                "type": "script",
+                "action": "Wander",
+                "params": {
+                    "speed": 10
+                }
+            },
+
+            {
+                "type": "script",
+                "action": "Chase",
+                "params": {
+                    "speed": 2
+                }
+            }
+        ]
+    }
+}

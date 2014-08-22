@@ -21,6 +21,20 @@ class ScriptBehavior
         return new ScriptBehavior(AssetPaths.Chase__hscript, { body: Body, speed: Speed });
     }
 
+    public function clone() : ScriptBehavior
+    {
+        var obj = Type.createEmptyInstance(Type.getClass(this)); 
+        for(ff in Reflect.fields(this)) 
+        {
+            Reflect.setField(obj, ff, Reflect.field(this, ff)); 
+        }
+
+        obj._body = null;
+        obj.reset();
+
+        return obj;
+    }
+
     private var _manager : ScriptManager;
     private var _script_name : String;
     private var _body : Actor;
@@ -38,7 +52,6 @@ class ScriptBehavior
 
     	if (InitialScriptState != null)
     	{
-    		trace('initializing states... $script_state  ...... $_initial_state .... $InitialScriptState');
     		_initial_state = InitialScriptState;
     		script_state = Reflect.copy(InitialScriptState);
     	}
@@ -55,13 +68,14 @@ class ScriptBehavior
 
     public function update() : Void 
     { 
-    	_manager.execute(_script_name, script_state);
+        if (state == BehaviorState.RUNNING)
+    	   _manager.execute(_script_name, script_state);
     }
 
     public function reset() : Void 
     { 
     	trace('$_script_name reset');
-    	trace('$script_state -> $_initial_state');
+    	trace('    $script_state -> $_initial_state');
     	script_state = Reflect.copy(_initial_state);
     	state = BehaviorState.IDLE; 
     }
@@ -81,17 +95,27 @@ class RepeatBehavior extends ScriptBehavior
 		_repeat_count = RepeatCount;
 	}
 
+    override public function clone() : ScriptBehavior
+    {
+        var obj : RepeatBehavior = cast super.clone();
+
+        obj._action = _action.clone();
+        //obj._action.reset();
+        obj.reset();
+
+        return obj;
+    }
+
 	override public function start(Body : Actor) : Void
 	{
+        super.start(Body);
 		state = BehaviorState.RUNNING;
 		_action.start(Body);
 	}
 
 	override public function reset() : Void
 	{
-        trace('repeat reset1');
 		super.reset();
-		trace('Repeat reset');
 		_action.reset();
 		_repetition = 0;
         state = BehaviorState.IDLE;
@@ -99,7 +123,7 @@ class RepeatBehavior extends ScriptBehavior
 
 	override public function update() : Void
 	{
-		if (_repetition >= _repeat_count - 1)
+		if (_repetition >= _repeat_count - 1 && _repeat_count != -1)
 		{
 			trace('REPEAT COMPLETE');
 			state = BehaviorState.SUCCEEDED;
@@ -109,6 +133,9 @@ class RepeatBehavior extends ScriptBehavior
 
 		//if (_action.state != BehaviorState.RUNNING)
 		//	_repetition += 1;
+
+        if (_action.state == BehaviorState.IDLE)
+            _action.start(_body);
 
 		_action.update();
 		if (_action.state == BehaviorState.SUCCEEDED)
@@ -132,11 +159,31 @@ class SequenceBehavior extends ScriptBehavior
 		_actions = Actions;
 	}
 
+    override public function clone() : ScriptBehavior
+    {
+        var obj = Type.createEmptyInstance(Type.getClass(this)); 
+        for(ff in Reflect.fields(this)) 
+        {
+            if (ff != '_actions')
+                Reflect.setField(obj, ff, Reflect.field(this, ff)); 
+        }
+
+        obj._actions = new Array<ScriptBehavior>();
+        for (i in 0..._actions.length)
+        {
+            var act : ScriptBehavior = cast _actions[i].clone();
+            act.reset();
+            obj._actions.push(act);
+        }
+
+        obj.reset();
+
+        return obj;
+    }
+
 	override public function reset() : Void
 	{
 		super.reset();
-		trace('Seq reset');
-
 		_current_idx = -1;
         state = BehaviorState.IDLE;
 
@@ -148,8 +195,6 @@ class SequenceBehavior extends ScriptBehavior
 
 	override public function update() : Void
 	{
-		trace('Sequence update: ${_current_idx}');
-
 		if (_current_idx == -1 || (_actions[_current_idx].state != BehaviorState.RUNNING && _actions[_current_idx].state != BehaviorState.IDLE))
 		{
 			_current_idx++;

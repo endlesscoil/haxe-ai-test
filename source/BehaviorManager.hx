@@ -13,7 +13,7 @@ class BehaviorManager
 	private var _behaviors : Map<String, ScriptBehavior>;
 	public function get_behavior(Name : String) : ScriptBehavior
 	{
-		return _behaviors.get(Name);
+		return _behaviors.get(Name).clone();
 	}
 
 	public function new() : Void
@@ -79,7 +79,7 @@ class BehaviorManager
 
 		behavior = new SequenceBehavior(behaviors);
 
-		trace('\tbehaviors: $behaviors');
+		//trace('\tbehaviors: $behaviors');
 
 		return behavior;
 	}

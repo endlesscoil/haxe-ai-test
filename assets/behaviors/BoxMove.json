@@ -1,6 +1,6 @@
 {
     "type": "repeat",
-    "count": 10,
+    "count": -1,
     "action": {
         "type": "sequence",
         "actions": [

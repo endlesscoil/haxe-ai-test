@@ -34,7 +34,7 @@ class Player implements Actor
 
         position = FlxPoint.get();
 
-        _brain = new Brain(this, ScriptBehavior.MoveTo(this, 100, 100, 5.0));
+        _brain = new Brain(this, Reg.behavior_manager.get_behavior(AssetPaths.Wandering__json));
 
         sprite = new FlxSprite();
         sprite.makeGraphic(10, 10, FlxColor.TRANSPARENT, true);
@@ -43,23 +43,16 @@ class Player implements Actor
 
     public function update() : Void
     {
+        trace('Updating Player $name');
         _brain.update();
 
         if (_brain.is_idle())
-            wander();
+            _brain.reset_behavior();
     }
 
     public function destroy() : Void
     {
         sprite = FlxDestroyUtil.destroy(sprite);
-    }
-
-    public function wander() : Void
-    {
-        var pos = { x: FlxRandom.intRanged(0, FlxG.width), y: FlxRandom.intRanged(0, FlxG.height) };
-        var speed = FlxRandom.intRanged(1, 10);
-
-        _brain.set_behavior(ScriptBehavior.MoveTo(this, pos.x, pos.y, speed));
     }
 
     public function setPosition(X : Float, Y : Float) : Void
@@ -86,7 +79,7 @@ class Enemy implements Actor
 
         position = FlxPoint.get();
 
-        _brain = new Brain(this, ScriptBehavior.Chase(this, FlxRandom.intRanged(1, 5)));
+        _brain = new Brain(this, Reg.behavior_manager.get_behavior(AssetPaths.Chase__json));
 
         sprite = new FlxSprite();
         sprite.makeGraphic(10, 10, FlxColor.TRANSPARENT, true);
@@ -95,7 +88,11 @@ class Enemy implements Actor
 
     public function update() : Void
     {
+        trace('Updating Enemy $name');
         _brain.update();
+
+        if (_brain.is_idle())
+            _brain.reset_behavior();
     }
 
     public function destroy() : Void

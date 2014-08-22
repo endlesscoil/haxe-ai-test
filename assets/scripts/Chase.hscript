@@ -3,19 +3,27 @@ function init()
 	Script.paused = -1;
     Script.target = null;
 	Script.initialized = true;
+    Script.target_timestamp = -1;
 }
 
 function get_random_target(distance)
 {
+    //trace('get random target');
     var potential_targets = new Array();
     for (p in GameState.players)
     {
+        //trace('grt-p=' + p);
         if (p.position.distanceTo(Script.body.position) < distance)
             potential_targets.push(p);
     }
 
     if (potential_targets.length > 0)
+    {
+
         Script.target = potential_targets[FlxRandom.intRanged(0, potential_targets.length - 1)];
+        Script.target_timestamp = Now().getTime();
+        //trace('ehhhh' + Script.target);
+    }
 }
 
 function update()
@@ -30,6 +38,8 @@ function update()
 
             Script.body.sprite.resetFrameBitmapDatas();
             FlxSpriteUtil.drawCircle(Script.body.sprite, Script.body.sprite.width / 2, Script.body.sprite.height / 2, Script.body.sprite.width / 2, 0xFFFF0000);
+            Script.state = BehaviorState.SUCCEEDED;
+            return;
         }
     }
 
@@ -64,6 +74,13 @@ function update()
                 Script.body.sprite.resetFrameBitmapDatas();
                 FlxSpriteUtil.drawCircle(Script.body.sprite, Script.body.sprite.width / 2, Script.body.sprite.height / 2, Script.body.sprite.width / 2, 0xFFFFFF00);
             }
+        }
+    }
+    else
+    {
+        if (Script.target_timestamp != -1 && Now().getTime() > Script.target_timestamp + 5)
+        {
+            Script.state = BehaviorState.FAILED;
         }
     }
 }
