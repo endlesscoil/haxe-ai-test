@@ -33,7 +33,9 @@ class BehaviorManager
             {
             	var behavior_def : Dynamic = Json.parse(behavior_string);
 
+                #if DEBUG_BEHAVIORS
             	trace('loaded $name - ' + behavior_def.type);
+                #end
 
             	var b : ScriptBehavior = build_behavior(behavior_def);
 
@@ -48,7 +50,10 @@ class BehaviorManager
 
 	private function build_behavior(behavior_def : Dynamic) : ScriptBehavior
 	{
+        #if DEBUG_BEHAVIORS
 		trace('building behavior: $behavior_def');
+        #end
+
 		var behavior : ScriptBehavior = null;
 
 		switch(behavior_def.type)
@@ -66,7 +71,10 @@ class BehaviorManager
 
 	private function build_sequence(behavior_def : Dynamic) : ScriptBehavior
 	{
+        #if DEBUG_BEHAVIORS
 		trace('building sequence: $behavior_def');
+        #end
+
 		var behaviors : Array<ScriptBehavior> = new Array<ScriptBehavior>();
 		var behavior : SequenceBehavior = null;
 
@@ -79,14 +87,15 @@ class BehaviorManager
 
 		behavior = new SequenceBehavior(behaviors);
 
-		//trace('\tbehaviors: $behaviors');
-
 		return behavior;
 	}
 
 	private function build_repetition(behavior_def : Dynamic) : ScriptBehavior
 	{
+        #if DEBUG_BEHAVIORS
 		trace('building repetition: $behavior_def');
+        #end
+        
 		var behavior : ScriptBehavior = null;
 
 		var temp_behavior : ScriptBehavior = build_behavior(behavior_def.action);

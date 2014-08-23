@@ -43,7 +43,10 @@ class Player implements Actor
 
     public function update() : Void
     {
+        #if DEBUG_BEHAVIORS
         trace('Updating Player $name');
+        #end
+        
         _brain.update();
 
         if (_brain.is_idle())
@@ -88,7 +91,10 @@ class Enemy implements Actor
 
     public function update() : Void
     {
+        #if DEBUG_BEHAVIORS
         trace('Updating Enemy $name');
+        #end
+
         _brain.update();
 
         if (_brain.is_idle())

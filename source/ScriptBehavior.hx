@@ -73,9 +73,11 @@ class ScriptBehavior
     }
 
     public function reset() : Void 
-    { 
-    	trace('$_script_name reset');
-    	trace('    $script_state -> $_initial_state');
+    {
+        #if DEBUG_BEHAVIORS
+    	trace('reset $script_state -> $_initial_state');
+        #end
+
     	script_state = Reflect.copy(_initial_state);
     	state = BehaviorState.IDLE; 
     }
@@ -100,7 +102,6 @@ class RepeatBehavior extends ScriptBehavior
         var obj : RepeatBehavior = cast super.clone();
 
         obj._action = _action.clone();
-        //obj._action.reset();
         obj.reset();
 
         return obj;
@@ -125,14 +126,14 @@ class RepeatBehavior extends ScriptBehavior
 	{
 		if (_repetition >= _repeat_count - 1 && _repeat_count != -1)
 		{
+            #if DEBUG_BEHAVIORS
 			trace('REPEAT COMPLETE');
+            #end
+
 			state = BehaviorState.SUCCEEDED;
 			//reset();
 			return;
 		}
-
-		//if (_action.state != BehaviorState.RUNNING)
-		//	_repetition += 1;
 
         if (_action.state == BehaviorState.IDLE)
             _action.start(_body);
@@ -140,7 +141,10 @@ class RepeatBehavior extends ScriptBehavior
 		_action.update();
 		if (_action.state == BehaviorState.SUCCEEDED)
 		{
+            #if DEBUG_BEHAVIORS
 			trace('REPEAT ACTION ${_repetition} COMPLETE');
+            #end
+
 			_action.reset();
 			_repetition += 1;
 		}
@@ -200,18 +204,26 @@ class SequenceBehavior extends ScriptBehavior
 			_current_idx++;
 			if (_current_idx > _actions.length - 1)
 			{
+                #if DEBUG_BEHAVIORS
 				trace('SEQUENCE COMPLETE!');
+                #end
+
 				reset();
 				state = BehaviorState.SUCCEEDED;
 				return;
 			}
 
-			//_actions[_current_idx].script_state.body = script_state.body;
+            #if DEBUG_BEHAVIORS
 			trace('STARTING SEQ ${_current_idx}');
+            #end
+
 			_actions[_current_idx].start(_body);
 		}
 
+        #if DEBUG_BEHAVIORS
 		trace('SEQUENCE UPDATE ${_current_idx}');
+        #end
+        
 		_actions[_current_idx].update();
 	}
 }

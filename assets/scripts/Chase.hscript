@@ -8,11 +8,9 @@ function init()
 
 function get_random_target(distance)
 {
-    //trace('get random target');
     var potential_targets = new Array();
     for (p in GameState.players)
     {
-        //trace('grt-p=' + p);
         if (p.position.distanceTo(Script.body.position) < distance)
             potential_targets.push(p);
     }
@@ -22,7 +20,6 @@ function get_random_target(distance)
 
         Script.target = potential_targets[FlxRandom.intRanged(0, potential_targets.length - 1)];
         Script.target_timestamp = Now().getTime();
-        //trace('ehhhh' + Script.target);
     }
 }
 
