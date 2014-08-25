@@ -13,12 +13,12 @@ class ScriptBehavior
 {
     public static function MoveTo(Body : Actor, X : Float, Y : Float, Speed : Float)
     {
-        return new ScriptBehavior(AssetPaths.MoveTo__hscript, { body: Body, x: X, y: Y, speed: Speed } );
+        return new ScriptBehavior(AssetPaths.ScriptAssets.MoveTo__hscript, { body: Body, x: X, y: Y, speed: Speed } );
     }
 
     public static function Chase(Body : Actor, Speed : Float)
     {
-        return new ScriptBehavior(AssetPaths.Chase__hscript, { body: Body, speed: Speed });
+        return new ScriptBehavior(AssetPaths.ScriptAssets.Chase__hscript, { body: Body, speed: Speed });
     }
 
     public function clone() : ScriptBehavior
@@ -223,7 +223,7 @@ class SequenceBehavior extends ScriptBehavior
         #if DEBUG_BEHAVIORS
 		trace('SEQUENCE UPDATE ${_current_idx}');
         #end
-        
+
 		_actions[_current_idx].update();
 	}
 }

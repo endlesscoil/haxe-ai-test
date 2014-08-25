@@ -3,8 +3,6 @@ package ;
 
 import haxe.Json;
 import ScriptBehavior.SequenceBehavior;
-import sys.FileSystem;
-import sys.io.File;
 
 class BehaviorManager 
 {
@@ -25,25 +23,28 @@ class BehaviorManager
 	{
 		_behaviors = new Map<String, ScriptBehavior>();
 
-        var files = FileSystem.readDirectory(BEHAVIOR_DIRECTORY);
-        for (name in files)
+        for (ass in openfl.Assets.list())
         {
-            var behavior_string : String = File.getContent(BEHAVIOR_DIRECTORY + name);
-            try 
+            if (ass.indexOf(BEHAVIOR_DIRECTORY) != -1)
             {
-            	var behavior_def : Dynamic = Json.parse(behavior_string);
+                var behavior_string : String = openfl.Assets.getText(ass);
 
-                #if DEBUG_BEHAVIORS
-            	trace('loaded $name - ' + behavior_def.type);
-                #end
+                try 
+                {
+                    var behavior_def : Dynamic = Json.parse(behavior_string);
 
-            	var b : ScriptBehavior = build_behavior(behavior_def);
+                    #if DEBUG_BEHAVIORS
+                    trace('loaded $ass - ' + behavior_def.type);
+                    #end
 
-                _behaviors.set(BEHAVIOR_DIRECTORY + name, b);
-            }
-            catch(err : Dynamic)
-            {
-                trace('Error parsing behavior $name: $err');
+                    var b : ScriptBehavior = build_behavior(behavior_def);
+
+                    _behaviors.set(ass, b);
+                }
+                catch(err : Dynamic)
+                {
+                    trace('Error parsing script $ass: $err');
+                }
             }
         }
 	}
@@ -95,7 +96,7 @@ class BehaviorManager
         #if DEBUG_BEHAVIORS
 		trace('building repetition: $behavior_def');
         #end
-        
+
 		var behavior : ScriptBehavior = null;
 
 		var temp_behavior : ScriptBehavior = build_behavior(behavior_def.action);

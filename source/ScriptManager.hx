@@ -8,8 +8,6 @@ import flixel.util.FlxPoint;
 import flixel.util.FlxRandom;
 import flixel.util.FlxSpriteUtil;
 import flixel.util.FlxVector;
-import sys.FileSystem;
-import sys.io.File;
 
 import ScriptBehavior.BehaviorState;
 
@@ -65,19 +63,22 @@ class ScriptManager
     {
         _scripts = new Map<String, hscript.Expr>();
 
-        var files = FileSystem.readDirectory(SCRIPT_DIRECTORY);
-        for (name in files)
+        for (ass in openfl.Assets.list())
         {
-            var script : String = File.getContent(SCRIPT_DIRECTORY + name);
-            try 
+            if (ass.indexOf(SCRIPT_DIRECTORY) != -1)
             {
-                var ast : hscript.Expr = _parser.parseString(script);
+                var script : String = openfl.Assets.getText(ass);
 
-                _scripts.set(SCRIPT_DIRECTORY + name, ast);
-            }
-            catch(err : Dynamic)
-            {
-                trace('Error parsing script $name: $err');
+                try 
+                {
+                    var ast : hscript.Expr = _parser.parseString(script);
+
+                    _scripts.set(ass, ast);
+                }
+                catch(err : Dynamic)
+                {
+                    trace('Error parsing script $ass: $err');
+                }
             }
         }
     }

@@ -34,7 +34,7 @@ class Player implements Actor
 
         position = FlxPoint.get();
 
-        _brain = new Brain(this, Reg.behavior_manager.get_behavior(AssetPaths.Wandering__json));
+        _brain = new Brain(this, Reg.behavior_manager.get_behavior(AssetPaths.BehaviorAssets.Wandering__json));
 
         sprite = new FlxSprite();
         sprite.makeGraphic(10, 10, FlxColor.TRANSPARENT, true);
@@ -46,7 +46,7 @@ class Player implements Actor
         #if DEBUG_BEHAVIORS
         trace('Updating Player $name');
         #end
-        
+
         _brain.update();
 
         if (_brain.is_idle())
@@ -82,7 +82,7 @@ class Enemy implements Actor
 
         position = FlxPoint.get();
 
-        _brain = new Brain(this, Reg.behavior_manager.get_behavior(AssetPaths.Chase__json));
+        _brain = new Brain(this, Reg.behavior_manager.get_behavior(AssetPaths.BehaviorAssets.Chase__json));
 
         sprite = new FlxSprite();
         sprite.makeGraphic(10, 10, FlxColor.TRANSPARENT, true);
@@ -130,7 +130,7 @@ class TestActor implements Actor
 
         position = FlxPoint.get();
 
-        var behavior = Reg.behavior_manager.get_behavior(AssetPaths.BoxMove__json);
+        var behavior = Reg.behavior_manager.get_behavior(AssetPaths.BehaviorAssets.BoxMove__json);
         _brain = new Brain(this, behavior);
 
         sprite = new FlxSprite();
