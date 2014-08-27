@@ -11,7 +11,9 @@ class BehaviorManager
 	private var _behaviors : Map<String, ScriptBehavior>;
 	public function get_behavior(Name : String) : ScriptBehavior
 	{
-		return _behaviors.get(Name).clone();
+        var template = _behaviors.get(Name);
+
+		return template.clone();
 	}
 
 	public function new() : Void

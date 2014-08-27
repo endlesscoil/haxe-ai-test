@@ -23,13 +23,14 @@ class ScriptBehavior
 
     public function clone() : ScriptBehavior
     {
-        var obj = Type.createEmptyInstance(Type.getClass(this)); 
-        for(ff in Reflect.fields(this)) 
-        {
-            Reflect.setField(obj, ff, Reflect.field(this, ff)); 
-        }
+        var obj = Type.createEmptyInstance(Type.getClass(this));
+        for(ff in Reflect.fields(this))
+            Reflect.setField(obj, ff, Reflect.field(this, ff));
 
         obj._body = null;
+        obj._script_name = _script_name;
+        obj._manager = Reg.script_manager;
+        obj._initial_state = _initial_state;
         obj.reset();
 
         return obj;
@@ -50,14 +51,15 @@ class ScriptBehavior
     	_manager = Reg.script_manager;
     	_script_name = Name;
 
-    	if (InitialScriptState != null)
-    	{
-    		_initial_state = InitialScriptState;
-    		script_state = Reflect.copy(InitialScriptState);
-    	}
+    	if (InitialScriptState == null)
+            InitialScriptState = {};
+    	
+		_initial_state = InitialScriptState;
+		script_state = Reflect.copy(InitialScriptState);
 
     	state = BehaviorState.IDLE;
     }
+
     public function start(Body : Actor) : Void 
     { 
     	reset();
@@ -69,7 +71,7 @@ class ScriptBehavior
     public function update() : Void 
     { 
         if (state == BehaviorState.RUNNING)
-    	   _manager.execute(_script_name, script_state);
+            _manager.execute(_script_name, script_state);
     }
 
     public function reset() : Void 
@@ -102,6 +104,7 @@ class RepeatBehavior extends ScriptBehavior
         var obj : RepeatBehavior = cast super.clone();
 
         obj._action = _action.clone();
+        obj._repeat_count = _repeat_count;
         obj.reset();
 
         return obj;
@@ -117,14 +120,17 @@ class RepeatBehavior extends ScriptBehavior
 	override public function reset() : Void
 	{
 		super.reset();
-		_action.reset();
+
+        if (_action != null)
+            _action.reset();
+
 		_repetition = 0;
         state = BehaviorState.IDLE;
 	}
 
 	override public function update() : Void
 	{
-		if (_repetition >= _repeat_count - 1 && _repeat_count != -1)
+		if (_repetition >= _repeat_count - 1 && _repeat_count > 0)
 		{
             #if DEBUG_BEHAVIORS
 			trace('REPEAT COMPLETE');
@@ -188,6 +194,7 @@ class SequenceBehavior extends ScriptBehavior
 	override public function reset() : Void
 	{
 		super.reset();
+
 		_current_idx = -1;
         state = BehaviorState.IDLE;
 

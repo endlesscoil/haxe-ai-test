@@ -34,7 +34,8 @@ class Player implements Actor
 
         position = FlxPoint.get();
 
-        _brain = new Brain(this, Reg.behavior_manager.get_behavior(AssetPaths.BehaviorAssets.Wandering__json));
+        var behavior = Reg.behavior_manager.get_behavior(AssetPaths.BehaviorAssets.Wandering__json);
+        _brain = new Brain(this, behavior);
 
         sprite = new FlxSprite();
         sprite.makeGraphic(10, 10, FlxColor.TRANSPARENT, true);

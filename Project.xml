@@ -47,7 +47,7 @@
 	
 	<!--------------------------------HAXEDEFINES----------------------------------->
 	
-	<!--haxedef name="DEBUG_BEHAVIOR" /-->
+	<!--haxedef name="DEBUG_BEHAVIORS" /-->
 
 	<!--Enable the Flixel core recording system-->
 	<!--haxedef name="FLX_RECORD" /-->
