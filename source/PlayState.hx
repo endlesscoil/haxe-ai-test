@@ -1,5 +1,6 @@
 package;
 
+import Actor.TestActor;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
@@ -21,8 +22,8 @@ class PlayState extends FlxState
 {
 	public var players : FlxTypedGroup<Player>;
 	public var enemies : FlxTypedGroup<Enemy>;
+	public var testers : FlxTypedGroup<TestActor>;
     public var bullets : FlxTypedGroup<FlxSprite>;
-	public var _test : Actor.TestActor;
 	private var _script_manager : ScriptManager;
 	private var _behavior_manager : BehaviorManager;
 
@@ -51,9 +52,10 @@ class PlayState extends FlxState
 
         	bullets.add(b);
         }
+		add(bullets);
 
 		players = new FlxTypedGroup<Player>();
-		for (i in 0...5)
+		for (i in 0...20)
 		{
 			var p = new Player(Std.string(i));
 			p.setPosition(FlxRandom.intRanged(0, FlxG.width), FlxRandom.intRanged(0, FlxG.height));
@@ -73,11 +75,14 @@ class PlayState extends FlxState
 		}
 		add(enemies);
 
-		_test = new Actor.TestActor();
-		_test.setPosition(200, 200);
-		add(_test);
-
-		add(bullets);
+		testers = new FlxTypedGroup<TestActor>();
+		for (i in 0...5)
+		{
+			var t = new TestActor();
+			t.setPosition(FlxRandom.intRanged(0, FlxG.width), FlxRandom.intRanged(0, FlxG.height));
+			testers.add(t);
+		}
+		add(testers);
 	}
 	
 	/**
@@ -90,7 +95,7 @@ class PlayState extends FlxState
 
 		players = FlxDestroyUtil.destroy(players);
 		enemies = FlxDestroyUtil.destroy(enemies);
-		_test = FlxDestroyUtil.destroy(_test);
+		testers = FlxDestroyUtil.destroy(testers);
 		bullets = FlxDestroyUtil.destroy(bullets);
 	}
 

@@ -44,7 +44,7 @@ function update()
     // chase
     else
     {
-        if (Script.fire_time == -1 || now > Script.fire_time)
+        if (Script.fire_time == -1 || now > Script.fire_time + 115)
         {
             Script.body.fire(Script.target);
             Script.fire_time = now;

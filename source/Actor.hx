@@ -144,9 +144,7 @@ class TestActor
 
         bullet.reset(x + (width - bullet.width) / 2, y + (height - bullet.height / 2));
         bullet.angle  = FlxAngle.angleBetween(this, Target, true);
-
-        bullet.velocity.set(150, 0);
-        bullet.velocity = FlxAngle.rotatePoint(bullet.velocity.x, bullet.velocity.y, 0, 0, bullet.angle);
+        bullet.velocity = FlxAngle.rotatePoint(150, 0, 0, 0, bullet.angle);
         bullet.velocity.x *= 2;
         bullet.velocity.y *= 2;
     }
