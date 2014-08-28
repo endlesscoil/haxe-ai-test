@@ -1,8 +1,10 @@
 package;
 
 import flixel.FlxG;
+import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.FlxState;
+import flixel.group.FlxTypedGroup;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
 import flixel.util.FlxColor;
@@ -17,8 +19,9 @@ import flixel.util.FlxRandom;
  */
 class PlayState extends FlxState
 {
-	public var players : Array<Player>;
-	public var enemies : Array<Enemy>;
+	public var players : FlxTypedGroup<Player>;
+	public var enemies : FlxTypedGroup<Enemy>;
+    public var bullets : FlxTypedGroup<FlxSprite>;
 	public var _test : Actor.TestActor;
 	private var _script_manager : ScriptManager;
 	private var _behavior_manager : BehaviorManager;
@@ -37,29 +40,44 @@ class PlayState extends FlxState
 		_behavior_manager = new BehaviorManager();
 		Reg.behavior_manager = _behavior_manager;
 
-		players = new Array<Player>();
+
+        bullets = new FlxTypedGroup<FlxSprite>(32);
+        for (i in 0...32)
+        {
+        	var b : FlxSprite = new FlxSprite(-100, -100);
+        	b.makeGraphic(5, 5, FlxColor.FUCHSIA);
+        	b.width = b.height = 5;
+        	b.exists = false;
+
+        	bullets.add(b);
+        }
+
+		players = new FlxTypedGroup<Player>();
 		for (i in 0...5)
 		{
 			var p = new Player(Std.string(i));
 			p.setPosition(FlxRandom.intRanged(0, FlxG.width), FlxRandom.intRanged(0, FlxG.height));
 
-			add(p.sprite);
-			players.push(p);
+			players.add(p);
 		}
 
-		enemies = new Array<Enemy>();
+		add(players);
+
+		enemies = new FlxTypedGroup<Enemy>();
 		for (i in 0...10)
 		{
 			var e : Enemy = new Enemy(Std.string(i));
 			e.setPosition(FlxRandom.intRanged(0, FlxG.width), FlxRandom.intRanged(0, FlxG.height));
 
-			add(e.sprite);
-			enemies.push(e);
+			enemies.add(e);
 		}
+		add(enemies);
 
 		_test = new Actor.TestActor();
 		_test.setPosition(200, 200);
-		add(_test.sprite);
+		add(_test);
+
+		add(bullets);
 	}
 	
 	/**
@@ -70,17 +88,10 @@ class PlayState extends FlxState
 	{
 		super.destroy();
 
-		for (p in players)
-		{
-			p.destroy();
-		}
-
-		for (e in enemies)
-		{
-			e.destroy();
-		}
-
-		_test.destroy();
+		players = FlxDestroyUtil.destroy(players);
+		enemies = FlxDestroyUtil.destroy(enemies);
+		_test = FlxDestroyUtil.destroy(_test);
+		bullets = FlxDestroyUtil.destroy(bullets);
 	}
 
 	/**
@@ -90,16 +101,12 @@ class PlayState extends FlxState
 	{
 		super.update();
 
-		for (p in players)
-		{
-			p.update();
-		}
+		FlxG.overlap(bullets, players, bulletHitsPlayer);
+	}
 
-		for (e in enemies)
-		{
-			e.update();
-		}
-
-		_test.update();
+	private function bulletHitsPlayer(Object1 : FlxObject, Object2 : FlxObject) : Void
+	{
+		Object1.kill();
+		Object2.kill();
 	}
 }

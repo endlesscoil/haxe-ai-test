@@ -8,13 +8,13 @@ function init()
 
 function update()
 {
-    if (Script.body.position.x != Script.x || Script.body.position.y != Script.y)
+    if (Script.body.x != Script.x || Script.body.y != Script.y)
     {
-        Script.vector.x = Script.x - Script.body.position.x;
-        Script.vector.y = Script.y - Script.body.position.y;
+        Script.vector.x = Script.x - Script.body.x;
+        Script.vector.y = Script.y - Script.body.y;
         Script.vector.normalize();
 
-        var new_pos = FlxPoint.weak(Script.body.position.x + Script.vector.x * Script.speed, Script.body.position.y + Script.vector.y * Script.speed);
+        var new_pos = FlxPoint.weak(Script.body.x + Script.vector.x * Script.speed, Script.body.y + Script.vector.y * Script.speed);
 
         if (new_pos.distanceTo(FlxPoint.weak(Script.x, Script.y)) < Script.speed)
             Script.body.setPosition(Script.x, Script.y);

@@ -11,13 +11,12 @@ function get_random_target(distance)
     var potential_targets = new Array();
     for (p in GameState.players)
     {
-        if (p.position.distanceTo(Script.body.position) < distance)
+        if (FlxPoint.weak(p.x, p.y).distanceTo(FlxPoint.weak(Script.body.x, Script.body.y)) < distance)
             potential_targets.push(p);
     }
 
     if (potential_targets.length > 0)
     {
-
         Script.target = potential_targets[FlxRandom.intRanged(0, potential_targets.length - 1)];
         Script.target_timestamp = Now().getTime();
     }
@@ -33,8 +32,8 @@ function update()
         {
             Script.paused = -1;
 
-            Script.body.sprite.resetFrameBitmapDatas();
-            FlxSpriteUtil.drawCircle(Script.body.sprite, Script.body.sprite.width / 2, Script.body.sprite.height / 2, Script.body.sprite.width / 2, 0xFFFF0000);
+            Script.body.resetFrameBitmapDatas();
+            FlxSpriteUtil.drawCircle(Script.body, Script.body.width / 2, Script.body.height / 2, Script.body.width / 2, 0xFFFF0000);
             Script.state = BehaviorState.SUCCEEDED;
             return;
         }
@@ -46,7 +45,7 @@ function update()
     // chase
     if (Script.target != null)
     {
-        if (Script.body.position.distanceTo(Script.target.position) > 75)
+        if (FlxPoint.weak(Script.body.x, Script.body.y).distanceTo(FlxPoint.weak(Script.target.x, Script.target.y)) > 75)
         {
             Script.target = null;
         }
@@ -57,19 +56,19 @@ function update()
 
             var mv = FlxVector.get();
 
-            mv.x = Script.target.position.x - Script.body.position.x;
-            mv.y = Script.target.position.y - Script.body.position.y;
+            mv.x = Script.target.x - Script.body.x;
+            mv.y = Script.target.y - Script.body.y;
             mv.normalize();
 
-            var new_pos = FlxPoint.weak(Script.body.position.x + mv.x * Script.speed, Script.body.position.y + mv.y * Script.speed);
+            var new_pos = FlxPoint.weak(Script.body.x + mv.x * Script.speed, Script.body.y + mv.y * Script.speed);
 
             Script.body.setPosition(new_pos.x, new_pos.y);
 
-            if (FlxCollision.pixelPerfectCheck(Script.body.sprite, Script.target.sprite))
+            if (FlxCollision.pixelPerfectCheck(Script.body, Script.target))
             {
                 Script.paused = Now().getTime();
-                Script.body.sprite.resetFrameBitmapDatas();
-                FlxSpriteUtil.drawCircle(Script.body.sprite, Script.body.sprite.width / 2, Script.body.sprite.height / 2, Script.body.sprite.width / 2, 0xFFFFFF00);
+                Script.body.resetFrameBitmapDatas();
+                FlxSpriteUtil.drawCircle(Script.body, Script.body.width / 2, Script.body.height / 2, Script.body.width / 2, 0xFFFFFF00);
             }
         }
     }

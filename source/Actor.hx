@@ -3,157 +3,151 @@ package ;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.group.FlxTypedGroup;
+import flixel.util.FlxAngle;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxPoint;
 import flixel.util.FlxRandom;
 using flixel.util.FlxSpriteUtil;
 
-interface Actor 
+interface Actor
 {
     public var name : String;
-    public var sprite : FlxSprite;
-    public var position : FlxPoint;
-
-    public function destroy() : Void;
-    public function setPosition(X : Float, Y : Float) : Void;
+    private var _brain : Brain;
 }
 
-class Player implements Actor 
+class Player 
+    extends FlxSprite 
+    implements Actor
 {
     public var name : String = "Player";
-    public var sprite : FlxSprite;
-    public var position : FlxPoint;
-
     private var _brain : Brain;
 
     public function new(?Name : String) : Void
     {
+        super();
+
         if (Name != null)
             name = Name;
 
-        position = FlxPoint.get();
+        _brain = new Brain(this, Reg.behavior_manager.get_behavior(AssetPaths.BehaviorAssets.Wandering__json));
 
-        var behavior = Reg.behavior_manager.get_behavior(AssetPaths.BehaviorAssets.Wandering__json);
-        _brain = new Brain(this, behavior);
-
-        sprite = new FlxSprite();
-        sprite.makeGraphic(10, 10, FlxColor.TRANSPARENT, true);
-        sprite.drawCircle(sprite.width / 2, sprite.height / 2, 5, FlxColor.AQUAMARINE);
+        makeGraphic(10, 10, FlxColor.TRANSPARENT, true);
+        drawCircle(width / 2, height / 2, 5, FlxColor.AQUAMARINE);
     }
 
-    public function update() : Void
+    public override function update() : Void
     {
         #if DEBUG_BEHAVIORS
         trace('Updating Player $name');
         #end
 
-        _brain.update();
+        super.update();
 
-        if (_brain.is_idle())
-            _brain.reset_behavior();
+        if (alive)
+        {
+            _brain.update();
+
+            if (_brain.is_idle())
+                _brain.reset_behavior();
+        }
     }
 
-    public function destroy() : Void
+    public override function destroy() : Void
     {
-        sprite = FlxDestroyUtil.destroy(sprite);
-    }
-
-    public function setPosition(X : Float, Y : Float) : Void
-    {
-        position.x = X;
-        position.y = Y;
-
-        sprite.setPosition(X, Y);
+        super.destroy();
     }
 }
 
-class Enemy implements Actor
+class Enemy 
+    extends FlxSprite 
+    implements Actor
 {
     public var name : String = "Enemy";
-    public var sprite : FlxSprite;
-    public var position : FlxPoint;
-
     private var _brain : Brain;
 
     public function new(?Name : String) : Void
     {
+        super();
+
         if (Name != null)
             name = Name;
 
-        position = FlxPoint.get();
-
         _brain = new Brain(this, Reg.behavior_manager.get_behavior(AssetPaths.BehaviorAssets.Chase__json));
 
-        sprite = new FlxSprite();
-        sprite.makeGraphic(10, 10, FlxColor.TRANSPARENT, true);
-        sprite.drawCircle(sprite.width / 2, sprite.height / 2, 5, 0xFFFF0000);
+        makeGraphic(10, 10, FlxColor.TRANSPARENT, true);
+        drawCircle(width / 2, height / 2, 5, 0xFFFF0000);
     }
 
-    public function update() : Void
+    public override function update() : Void
     {
         #if DEBUG_BEHAVIORS
         trace('Updating Enemy $name');
         #end
 
-        _brain.update();
+        if(alive)
+        {
+            _brain.update();
 
-        if (_brain.is_idle())
-            _brain.reset_behavior();
+            if (_brain.is_idle())
+                _brain.reset_behavior();
+        }
+
+        super.update();
     }
 
-    public function destroy() : Void
+    public override function destroy() : Void
     {
-        sprite = FlxDestroyUtil.destroy(sprite);
-    }
-
-    public function setPosition(X : Float, Y : Float) : Void
-    {
-        position.x = X;
-        position.y = Y;
-
-        sprite.setPosition(X, Y);
+        super.destroy();
     }
 }
 
-class TestActor implements Actor
+class TestActor 
+    extends FlxSprite 
+    implements Actor
 {
     public var name : String = "TestActor";
-    public var sprite : FlxSprite;
-    public var position : FlxPoint;
 
     private var _brain : Brain;
 
     public function new(?Name : String) : Void
     {
+        super();
+
         if (Name != null)
             name = Name;
 
-        position = FlxPoint.get();
+        //_brain = new Brain(this, Reg.behavior_manager.get_behavior(AssetPaths.BehaviorAssets.BoxMove__json));
+        _brain = new Brain(this, Reg.behavior_manager.get_behavior(AssetPaths.BehaviorAssets.Hunt__json));
 
-        var behavior = Reg.behavior_manager.get_behavior(AssetPaths.BehaviorAssets.BoxMove__json);
-        _brain = new Brain(this, behavior);
-
-        sprite = new FlxSprite();
-        sprite.makeGraphic(10, 10, FlxColor.TRANSPARENT, true);
-        sprite.drawCircle(sprite.width / 2, sprite.height / 2, 5, 0xFF00FF00);
+        makeGraphic(10, 10, FlxColor.TRANSPARENT, true);
+        drawCircle(width / 2, height / 2, 5, 0xFF00FF00);
     }
 
-    public function update() : Void
+    public override function update() : Void
     {
-        _brain.update();
+        super.update();
+
+        if(alive)
+            _brain.update();
     }
 
-    public function destroy() : Void
+    public override function destroy() : Void
     {
-        sprite = FlxDestroyUtil.destroy(sprite);
+        super.destroy();
     }
 
-    public function setPosition(X : Float, Y : Float) : Void
+    public function fire(Target : FlxSprite) : Void
     {
-        position.x = X;
-        position.y = Y;
+        var bullet : FlxSprite = Reg.state.bullets.recycle();
 
-        sprite.setPosition(X, Y);
+        bullet.reset(x + (width - bullet.width) / 2, y + (height - bullet.height / 2));
+        bullet.angle  = FlxAngle.angleBetween(this, Target, true);
+
+        bullet.velocity.set(150, 0);
+        bullet.velocity = FlxAngle.rotatePoint(bullet.velocity.x, bullet.velocity.y, 0, 0, bullet.angle);
+        bullet.velocity.x *= 2;
+        bullet.velocity.y *= 2;
     }
 }
