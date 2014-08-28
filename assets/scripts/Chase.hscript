@@ -9,24 +9,33 @@ function init()
 function get_random_target(distance)
 {
     var potential_targets = new Array();
+
+    Script.target = null;
+    Script.target_timestamp = Now().getTime();
+
     for (p in GameState.players)
     {
-        if (FlxPoint.weak(p.x, p.y).distanceTo(FlxPoint.weak(Script.body.x, Script.body.y)) < distance)
+        if (p.exists && FlxPoint.weak(p.x, p.y).distanceTo(FlxPoint.weak(Script.body.x, Script.body.y)) < distance)
             potential_targets.push(p);
     }
 
     if (potential_targets.length > 0)
-    {
         Script.target = potential_targets[FlxRandom.intRanged(0, potential_targets.length - 1)];
-        Script.target_timestamp = Now().getTime();
-    }
+}
+
+function validate_target(distance)
+{
+    if (!Script.target || !Script.target.exists || FlxPoint.weak(Script.body.x, Script.body.y).distanceTo(FlxPoint.weak(Script.target.x, Script.target.y)) > distance)
+        get_random_target(distance);
 }
 
 function update()
 {
+    var now = Now().getTime();
+
     if (Script.paused != -1)
     {
-        if (Now().getTime() < Script.paused + 5)
+        if (now < Script.paused + 5)
             return;
         else
         {
@@ -39,44 +48,33 @@ function update()
         }
     }
 
+    validate_target(75);
+
     if (Script.target == null)
-        get_random_target(75);
-
-    // chase
-    if (Script.target != null)
     {
-        if (FlxPoint.weak(Script.body.x, Script.body.y).distanceTo(FlxPoint.weak(Script.target.x, Script.target.y)) > 75)
-        {
-            Script.target = null;
-        }
-        else
-        {
-            if (FlxRandom.chanceRoll(25))
-                get_random_target(75);
-
-            var mv = FlxVector.get();
-
-            mv.x = Script.target.x - Script.body.x;
-            mv.y = Script.target.y - Script.body.y;
-            mv.normalize();
-
-            var new_pos = FlxPoint.weak(Script.body.x + mv.x * Script.speed, Script.body.y + mv.y * Script.speed);
-
-            Script.body.setPosition(new_pos.x, new_pos.y);
-
-            if (FlxCollision.pixelPerfectCheck(Script.body, Script.target))
-            {
-                Script.paused = Now().getTime();
-                Script.body.resetFrameBitmapDatas();
-                FlxSpriteUtil.drawCircle(Script.body, Script.body.width / 2, Script.body.height / 2, Script.body.width / 2, 0xFFFFFF00);
-            }
-        }
+        if (FlxRandom.chanceRoll(0.25))
+            get_random_target(75);
+        else if (Script.target_timestamp != -1 && now > Script.target_timestamp + 5)
+            Script.state = BehaviorState.FAILED;
     }
+    // chase
     else
     {
-        if (Script.target_timestamp != -1 && Now().getTime() > Script.target_timestamp + 5)
+        var mv = FlxVector.get();
+
+        mv.x = Script.target.x - Script.body.x;
+        mv.y = Script.target.y - Script.body.y;
+        mv.normalize();
+
+        var new_pos = FlxPoint.weak(Script.body.x + mv.x * Script.speed, Script.body.y + mv.y * Script.speed);
+
+        Script.body.setPosition(new_pos.x, new_pos.y);
+
+        if (FlxCollision.pixelPerfectCheck(Script.body, Script.target))
         {
-            Script.state = BehaviorState.FAILED;
+            Script.paused = now;
+            Script.body.resetFrameBitmapDatas();
+            FlxSpriteUtil.drawCircle(Script.body, Script.body.width / 2, Script.body.height / 2, Script.body.width / 2, 0xFFFFFF00);
         }
     }
 }

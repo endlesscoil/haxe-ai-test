@@ -1,0 +1,58 @@
+function init()
+{
+    Script.target = null;
+    Script.initialized = true;
+    Script.target_timestamp = -1;
+    Script.fire_time = -1;
+}
+
+function get_random_target(distance)
+{
+    var potential_targets = new Array();
+
+    Script.target = null;
+    Script.target_timestamp = Now().getTime();
+
+    for (p in GameState.players)
+    {
+        if (p.exists && FlxPoint.weak(p.x, p.y).distanceTo(FlxPoint.weak(Script.body.x, Script.body.y)) < distance)
+            potential_targets.push(p);
+    }
+
+    if (potential_targets.length > 0)
+        Script.target = potential_targets[FlxRandom.intRanged(0, potential_targets.length - 1)];
+}
+
+function validate_target(distance)
+{
+    if (!Script.target || !Script.target.exists || FlxPoint.weak(Script.body.x, Script.body.y).distanceTo(FlxPoint.weak(Script.target.x, Script.target.y)) > distance)
+        get_random_target(distance);
+}
+
+function update()
+{
+    var now = Now().getTime();
+
+    validate_target(75);
+
+    if (Script.target == null)
+    {
+        // randomly abandon position.
+        if (FlxRandom.chanceRoll(0.25))
+            Script.state = BehaviorState.SUCCEEDED;
+    }
+    // chase
+    else
+    {
+        if (Script.fire_time == -1 || now > Script.fire_time)
+        {
+            Script.body.fire(Script.target);
+            Script.fire_time = now;
+        }
+    }
+}
+
+if (!Script.initialized)
+    init();
+else
+    update();
