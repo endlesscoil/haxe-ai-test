@@ -14,6 +14,7 @@ using flixel.util.FlxSpriteUtil;
 interface Actor
 {
     public var name : String;
+    public var speed : Int;
     private var _brain : Brain;
 }
 
@@ -22,6 +23,7 @@ class Player
     implements Actor
 {
     public var name : String = "Player";
+    public var speed : Int = 5;
     private var _brain : Brain;
 
     public function new(?Name : String) : Void
@@ -65,6 +67,7 @@ class Enemy
     implements Actor
 {
     public var name : String = "Enemy";
+    public var speed: Int = 1;
     private var _brain : Brain;
 
     public function new(?Name : String) : Void
@@ -108,7 +111,7 @@ class TestActor
     implements Actor
 {
     public var name : String = "TestActor";
-
+    public var speed : Int = 3;
     private var _brain : Brain;
 
     public function new(?Name : String) : Void

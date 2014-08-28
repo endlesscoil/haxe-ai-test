@@ -12,9 +12,9 @@ function update()
 	    Script.vector.y = Script.y - Script.body.y;
 	    Script.vector.normalize();
 
-	    var new_pos = FlxPoint.weak(Script.body.x + Script.vector.x * Script.speed, Script.body.y + Script.vector.y * Script.speed);
+	    var new_pos = FlxPoint.weak(Script.body.x + Script.vector.x * Script.body.speed, Script.body.y + Script.vector.y * Script.body.speed);
 
-	    if (new_pos.distanceTo(FlxPoint.weak(Script.x, Script.y)) < Script.speed)
+	    if (new_pos.distanceTo(FlxPoint.weak(Script.x, Script.y)) < Script.body.speed)
 	        Script.body.setPosition(Script.x, Script.y);
 	    else
 	        Script.body.setPosition(new_pos.x, new_pos.y);
